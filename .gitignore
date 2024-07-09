@@ -1,0 +1,8 @@
+.DS_Store
+bin/
+obj/
+.vs/
+.vscode/
+project.lock.json
+project.fragment.lock.json
+artifacts/
