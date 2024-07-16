@@ -9,10 +9,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-Console.WriteLine($"--> Using InMemoryDB");
-builder.Services.AddDbContext<AppDbContext>(
-    options => options.UseInMemoryDatabase("InMemoryDB")
-);
+if (builder.Environment.IsProduction())
+{
+    Console.WriteLine($"--> Using SQL");
+    var connectionString = builder.Configuration.GetConnectionString("PlatformsConnection");
+    builder.Services.AddDbContext<AppDbContext>(
+        options => options.UseSqlServer(connectionString)
+    );
+}
+else
+{
+    Console.WriteLine($"--> Using InMemoryDB");
+    builder.Services.AddDbContext<AppDbContext>(
+        options => options.UseInMemoryDatabase("InMemoryDB")
+    );
+}
+
 builder.Services.AddScoped<IPlatformRepository, PlatformRepository>();
 builder.Services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
 builder.Services.AddControllers();
@@ -20,7 +32,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
-PrepDb.PrepPopulation(app);
+PrepDb.PrepPopulation(app, app.Environment);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
