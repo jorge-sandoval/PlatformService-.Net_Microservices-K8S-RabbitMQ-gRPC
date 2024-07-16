@@ -4,12 +4,12 @@ namespace PlatformService.Data
 {
     public interface IPlatformRepository
     {
-        bool SaveChanges();
+        Task<bool> SaveChanges();
 
-        IEnumerable<Platform> GetAllPlatforms();
+        Task<IEnumerable<Platform>> GetAllPlatforms();
 
-        Platform GetPlatformById(int id);
+        Task<Platform?> GetPlatformById(int id);
 
-        void CreatePlaform(Platform platform);
+        Task CreatePlaform(Platform platform);
     }
 }
